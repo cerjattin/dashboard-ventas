@@ -25,7 +25,7 @@ import {
   Activity,
 } from "lucide-react";
 
-const API_URL = "https://api-dashgams.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL;
 
 type Venta = {
   id: number;

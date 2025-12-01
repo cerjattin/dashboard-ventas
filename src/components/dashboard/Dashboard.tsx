@@ -291,24 +291,6 @@ const Dashboard: React.FC = () => {
     }));
   }, [datosFiltrados]);
 
-  // --- Metas para KPI Estructura de Metas (sin duplicar por periodo) ---
-  const metasEstructura = useMemo(() => {
-    const mapa = new Map<string, { meta1: number; meta2: number }>();
-    datosFiltrados.forEach((d) => {
-      const clave = `${d.ano}-${d.periodo}`;
-      const ex = mapa.get(clave);
-      if (!ex) mapa.set(clave, { meta1: d.meta1, meta2: d.meta2 });
-      else {
-        ex.meta1 = Math.max(ex.meta1, d.meta1);
-        ex.meta2 = Math.max(ex.meta2, d.meta2);
-      }
-    });
-    let m1 = 0, m2 = 0;
-    mapa.forEach(v => { m1 += v.meta1; m2 += v.meta2; });
-    return { meta1: m1, meta2: m2 };
-  }, [datosFiltrados]);
-
-
   // --- Agrupación por vendedor ---
   const datosPorVendedor = useMemo(() => {
     const mapa = new Map<
@@ -340,24 +322,6 @@ const Dashboard: React.FC = () => {
     arr.sort((a, b) => b.ventas - a.ventas);
     return arr;
   }, [datosFiltrados]);
-
-  // --- Metas para KPI Estructura de Metas (sin duplicar por periodo) ---
-  const metasEstructura = useMemo(() => {
-    const mapa = new Map<string, { meta1: number; meta2: number }>();
-    datosFiltrados.forEach((d) => {
-      const clave = `${d.ano}-${d.periodo}`;
-      const ex = mapa.get(clave);
-      if (!ex) mapa.set(clave, { meta1: d.meta1, meta2: d.meta2 });
-      else {
-        ex.meta1 = Math.max(ex.meta1, d.meta1);
-        ex.meta2 = Math.max(ex.meta2, d.meta2);
-      }
-    });
-    let m1 = 0, m2 = 0;
-    mapa.forEach(v => { m1 += v.meta1; m2 += v.meta2; });
-    return { meta1: m1, meta2: m2 };
-  }, [datosFiltrados]);
-
 
   // --- KPIs Globales ---
   const kpis = useMemo(() => {
@@ -417,25 +381,21 @@ const Dashboard: React.FC = () => {
     };
   }, [datosFiltrados]);
 
-  // --- Metas para KPI Estructura de Metas (sin duplicar por periodo) ---
-  const metasEstructura = useMemo(() => {
-    const mapa = new Map<string, { meta1: number; meta2: number }>();
-    datosFiltrados.forEach((d) => {
-      const clave = `${d.ano}-${d.periodo}`;
-      const ex = mapa.get(clave);
-      if (!ex) mapa.set(clave, { meta1: d.meta1, meta2: d.meta2 });
-      else {
-        ex.meta1 = Math.max(ex.meta1, d.meta1);
-        ex.meta2 = Math.max(ex.meta2, d.meta2);
-      }
-    });
-    let m1 = 0, m2 = 0;
-    mapa.forEach(v => { m1 += v.meta1; m2 += v.meta2; });
-    return { meta1: m1, meta2: m2 };
-  }, [datosFiltrados]);
-
-
   // --- Datos para gráfico pastel de estructura de metas ---
+  const dataPieMetas = useMemo(
+    () => [
+      {
+        name: "Meta 1",
+        value: kpis.totalMeta1,
+      },
+      {
+        name: "Meta 2",
+        value: kpis.totalMeta2,
+      },
+    ],
+    [kpis.totalMeta1, kpis.totalMeta2]
+  );
+
   const handleDescargar = () => {
     const dataExport = datosFiltrados.map((d) => ({
       Año: d.ano,
@@ -456,18 +416,6 @@ const Dashboard: React.FC = () => {
     const a = document.createElement("a");
     a.href = url;
     const hoy = new Date().toISOString().split("T")[0];
-    a.download = `dashboard_ventas_${hoy}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const dataPieMetas = useMemo(
-    () => [
-      { name: "Meta 1", value: metasEstructura.meta1 },
-      { name: "Meta 2", value: metasEstructura.meta2 },
-    ],
-    [metasEstructura.meta1, metasEstructura.meta2]
-  );
     a.download = `dashboard_ventas_${hoy}.json`;
     a.click();
     URL.revokeObjectURL(url);
@@ -729,7 +677,7 @@ const Dashboard: React.FC = () => {
                 Meta 1:{" "}
                 <span className="font-semibold text-blue-400">
                   $
-                  {metasEstructura.meta1.toLocaleString("es-CO", {
+                  {kpis.totalMeta1.toLocaleString("es-CO", {
                     maximumFractionDigits: 0,
                   })}
                 </span>
@@ -738,7 +686,7 @@ const Dashboard: React.FC = () => {
                 Meta 2:{" "}
                 <span className="font-semibold text-purple-400">
                   $
-                  {metasEstructura.meta2.toLocaleString("es-CO", {
+                  {kpis.totalMeta2.toLocaleString("es-CO", {
                     maximumFractionDigits: 0,
                   })}
                 </span>

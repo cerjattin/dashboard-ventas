@@ -384,38 +384,11 @@ const Dashboard: React.FC = () => {
   // --- Datos para gráfico pastel de estructura de metas ---
   const dataPieMetas = useMemo(
     () => [
-      {
-        name: "Meta 1",
-        value: kpis.totalMeta1,
-      },
-      {
-        name: "Meta 2",
-        value: kpis.totalMeta2,
-      },
+      { name: "Meta 1", value: metasEstructura.meta1 },
+      { name: "Meta 2", value: metasEstructura.meta2 },
     ],
-    [kpis.totalMeta1, kpis.totalMeta2]
+    [metasEstructura.meta1, metasEstructura.meta2]
   );
-
-  const handleDescargar = () => {
-    const dataExport = datosFiltrados.map((d) => ({
-      Año: d.ano,
-      Periodo: d.periodo,
-      Mes: d.mesCod,
-      Vendedor: d.vendedor,
-      Ventas: d.ventas,
-      Meta1: d.meta1,
-      Cumplimiento1: d.cumplimiento1,
-      Meta2: d.meta2,
-      Cumplimiento2: d.cumplimiento2,
-    }));
-
-    const blob = new Blob([JSON.stringify(dataExport, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    const hoy = new Date().toISOString().split("T")[0];
     a.download = `dashboard_ventas_${hoy}.json`;
     a.click();
     URL.revokeObjectURL(url);
@@ -677,7 +650,7 @@ const Dashboard: React.FC = () => {
                 Meta 1:{" "}
                 <span className="font-semibold text-blue-400">
                   $
-                  {kpis.totalMeta1.toLocaleString("es-CO", {
+                  {metasEstructura.meta1.toLocaleString("es-CO", {
                     maximumFractionDigits: 0,
                   })}
                 </span>
@@ -686,7 +659,7 @@ const Dashboard: React.FC = () => {
                 Meta 2:{" "}
                 <span className="font-semibold text-purple-400">
                   $
-                  {kpis.totalMeta2.toLocaleString("es-CO", {
+                  {metasEstructura.meta2.toLocaleString("es-CO", {
                     maximumFractionDigits: 0,
                   })}
                 </span>
